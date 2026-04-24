@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>वाटर बिल कैलकुलेटर</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts for premium typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header class="app-header">
+        <div class="header-content">
+            <svg class="header-icon" xmlns="http://www.w3.org/Droplets" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7 2.9 7 2.9s-2.29 6.16-2.29 6.16C3.57 10 3 11.08 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 0 14 6c2.65 0 5.16 1.09 7.03 2.97a10.02 10.02 0 0 1 2.97 7.03c0 2.65-1.09 5.16-2.97 7.03A9.98 9.98 0 0 1 14 26a9.98 9.98 0 0 1-7.03-2.97A10.02 10.02 0 0 1 4 16c0-1.4.28-2.76.8-4.04"/></svg>
+            <h1>वाटर बिल</h1>
+        </div>
+    </header>
+
+    <main class="app-container">
+        
+        <div class="card no-print">
+            <h2 class="card-title">बिल विवरण दर्ज करें</h2>
+            
+            <div class="input-group">
+                <div class="input-box">
+                    <label class="input-label" for="startDate">प्रारंभ तिथि</label>
+                    <input type="date" id="startDate" value="2011-01-01">
+                </div>
+                <div class="input-box">
+                    <label class="input-label" for="endDate">समाप्ति तिथि</label>
+                    <input type="date" id="endDate">
+                </div>
+            </div>
+
+            <div class="input-box mt-15">
+                <label class="input-label" for="advancePayment">अग्रिम भुगतान (₹)</label>
+                <input type="number" id="advancePayment" value="300" min="0" step="150" placeholder="उदा: 150, 300, 450">
+            </div>
+
+            <label class="toggle-switch mt-20" for="lokAdalat">
+                <input type="checkbox" id="lokAdalat" onchange="calculateBill()">
+                <div class="toggle-slider"></div>
+                <span class="toggle-label">लोक अदालत नियम लागू करें <br><small>(चालू वर्ष की पेनल्टी छोड़कर)</small></span>
+            </label>
+
+            <div class="btn-group mt-20">
+                <button class="btn btn-primary shadow-btn" onclick="calculateBill()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="16" y1="14" x2="16" y2="14"/><line x1="12" y1="14" x2="12" y2="14"/><line x1="8" y1="14" x2="8" y2="14"/><line x1="16" y1="18" x2="16" y2="18"/><line x1="12" y1="18" x2="12" y2="18"/><line x1="8" y1="18" x2="8" y2="18"/></svg>
+                    कैलकुलेट करें
+                </button>
+                <button class="btn btn-secondary shadow-btn" onclick="window.print()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                    प्रिंट
+                </button>
+            </div>
+        </div>
+
+        <div id="remarkBox" class="remark-box" style="display: none;"></div>
+
+        <div class="card result-card mt-20">
+            <h2 class="card-title">बिल समरी</h2>
+            
+            <div class="summary-list">
+                <div class="summary-item">
+                    <span>बिल राशि (Arrears + Current)</span>
+                    <span id="totalBillAmount" class="val-bill">0.00</span>
+                </div>
+                <div class="summary-item">
+                    <span id="penaltyLabel">पेनल्टी (10%)</span>
+                    <span id="penaltyAmount" class="val-penalty">0.00</span>
+                </div>
+                <div class="summary-item" id="discountRow" style="display: none;">
+                    <span class="text-success">लोक अदालत छूट</span>
+                    <span id="discountAmount" class="val-discount">0.00</span>
+                </div>
+                <div class="summary-item">
+                    <span>अग्रिम भुगतान (Advance)</span>
+                    <span id="advPaymentDisplay" class="val-advance">0.00</span>
+                </div>
+                <div class="summary-item total-row">
+                    <span>कुल देय राशि</span>
+                    <span id="finalCharge">0.00</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-20 table-card">
+            <h2 class="card-title">दर विवरण (Slabs)</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rate (₹)</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Months</th>
+                            <th>Amount (₹)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="slabsBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').then(registration => {
+                    console.log('SW registered:', registration);
+                }).catch(registrationError => {
+                    console.log('SW registration failed:', registrationError);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
