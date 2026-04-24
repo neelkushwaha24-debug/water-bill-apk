@@ -36,7 +36,7 @@ jobs:
           channel: 'stable'
 
       - name: Build APK with Flet
-        run: flet build apk
+        run: flet build apk --project water_bill_app --product "Water Bill" --org com.waterbill.app --description "Water Bill App"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
